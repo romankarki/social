@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
 
 # Create your models here.
 
 class Post(models.Model):
     """
-    Scheme  for every possible posts that a user can create
+    Schema  for every possible posts that a user can create
     """
     caption = models.CharField(max_length=500)
     postedOn = models.DateTimeField(auto_now_add = True) #for a new post only not for updates 
@@ -17,7 +17,7 @@ class Post(models.Model):
     def __str__(self):
         return (self.caption)
 
-        
+
 
 class Reaction(models.Model):
     """
@@ -30,11 +30,19 @@ class Reaction(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     post_reaction = models.CharField( max_length=50,choices = user_reaction,blank=True,null=True)
 
+    class Meta:
+        unique_together = ('user','post')
+
     def __str__(self):
         return self.post_reaction
-    
-    
 
 
-    
+class Comment(models.Model):
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=700)
+    added_on = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.comment
