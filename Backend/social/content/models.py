@@ -11,7 +11,7 @@ class Post(models.Model):
     postedOn = models.DateTimeField(auto_now_add = True) #for a new post only not for updates 
     status = models.CharField(max_length=500)
     photo = models.ImageField( upload_to="posts",blank=True,null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    author_of_post = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     def __str__(self):
@@ -26,12 +26,12 @@ class Reaction(models.Model):
     user_reaction = [
         ("HAHA","HAHA"),("LOVE","LOVE"),("LIKE","LIKE"),("SAD","SAD"),("ANGRY","ANGRY"),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    author_of_reaction = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     post_reaction = models.CharField( max_length=50,choices = user_reaction,blank=True,null=True)
 
     class Meta:
-        unique_together = ('user','post')
+        unique_together = ('author_of_reaction','post')
 
     def __str__(self):
         return self.post_reaction
@@ -39,7 +39,7 @@ class Reaction(models.Model):
 
 class Comment(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    author_of_comment = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment = models.CharField(max_length=700)
     added_on = models.DateField(auto_now_add=True)

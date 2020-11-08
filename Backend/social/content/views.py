@@ -1,12 +1,11 @@
 from django.shortcuts import render
-from .serializers import PostSerializer
+from .serializers import PostSerializer,PostCommentReactionSerializer
 from django.http import JsonResponse
 from rest_framework import permissions
 from rest_framework import generics
 from .models import Post
 
 # Create your views here.
-
 
 def test1(self):
     """
@@ -20,13 +19,15 @@ class PostListCreate(generics.ListCreateAPIView):
     """
     Responsible for creating  a new post 
     And, Also for listing all the created Posts
+    with nested output of reactions and comments
+    associated to each respective post
     """
     
     permission_classes = [
         permissions.IsAuthenticated,
     ]
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = PostCommentReactionSerializer
 
 
 class PostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
