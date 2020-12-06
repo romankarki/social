@@ -1,14 +1,27 @@
 from .models import Post,Comment,Reaction
 from rest_framework import serializers
 from accounts.serializers import UserSerializer,UserShowSerializer
-
+from accounts.models import User
 
 class PostSerializer(serializers.ModelSerializer):
 
-	user = UserSerializer()
+	author_of_post = UserSerializer()
 	class Meta:
 		model = Post
 		fields="__all__"
+
+class PostCreateSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Post
+		fields = "__all__"
+		#exclude = ["author_of_post"]
+		extra_kwargs = {"author_of_post":{"read_only":True}}
+
+	def create(self,validated_data,*args,**kwargs):
+		validated_data["author_of_post"] = self.context["request"].user
+		return super().create(validated_data,*args,**kwargs)
+
 
 class CommentSerializer(serializers.ModelSerializer):
 

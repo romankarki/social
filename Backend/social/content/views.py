@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from .serializers import PostSerializer,PostCommentReactionSerializer
+from .serializers import PostSerializer,PostCommentReactionSerializer, PostCreateSerializer
 from django.http import JsonResponse
 from rest_framework import permissions
 from rest_framework import generics
 from .models import Post
+from .permissions import ReadOnly,IsAuthor
 
 # Create your views here.
 
@@ -24,10 +25,21 @@ class PostListCreate(generics.ListCreateAPIView):
     """
     
     permission_classes = [
-        permissions.IsAuthenticated,
+         permissions.IsAuthenticated,
     ]
     queryset = Post.objects.all()
-    serializer_class = PostCommentReactionSerializer
+    #serializer_class = PostCommentReactionSerializer
+
+    def get_serializer_class(self,*args,**kwargs):
+        if self.request.method == 'GET':
+            return PostCommentReactionSerializer
+        elif self.request.method == 'POST':
+            return PostCreateSerializer
+        return PostCreateSerializer
+
+
+
+
 
 
 class PostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
@@ -38,7 +50,9 @@ class PostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     retrieve: get that specific post
     """
     permission_classes = [
-        permissions.IsAuthenticated,
+         #permissions.IsAuthenticated,
+         IsAuthor,
+        
     ]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
